@@ -54,6 +54,14 @@ public class DashboardActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        svRestaurant.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                loadItem(GET_LIST_RESTAURANT);
+                return false;
+            }
+        });
     }
 
     //Method untuk bind view
