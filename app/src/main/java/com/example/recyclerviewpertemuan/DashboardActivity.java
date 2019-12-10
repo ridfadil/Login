@@ -5,16 +5,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
 import android.widget.Toast;
+
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.ParsedRequestListener;
 import com.example.recyclerviewpertemuan.adapter.RestaurantAdapter;
+import com.example.recyclerviewpertemuan.auth.ProfileActivity;
 import com.example.recyclerviewpertemuan.data.Session;
 import com.example.recyclerviewpertemuan.model.ListRestaurantResponse;
 
@@ -41,7 +45,7 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     //Method Search
-    private void initSearch(){
+    private void initSearch() {
         svRestaurant.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -65,7 +69,7 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     //Method untuk bind view
-    private void initView(){
+    private void initView() {
         svRestaurant = findViewById(R.id.sv_restaurant);
     }
 
@@ -80,16 +84,19 @@ public class DashboardActivity extends AppCompatActivity {
     //Menthod ini digunakan untuk menangani kejadian saat OptionMenu diklik
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.menu_logout:
                 session.logoutUser();
                 break;
-            }
+            case R.id.menu_account:
+                startActivity(new Intent(DashboardActivity.this, ProfileActivity.class));
+                break;
+        }
         return true;
     }
 
     //Method untuk set recyclerview
-    public void initRecyclerView(){
+    public void initRecyclerView() {
         adapter = new RestaurantAdapter(this);
         loadItem(GET_LIST_RESTAURANT);
         rv = findViewById(R.id.rv_restaurant);
@@ -107,7 +114,7 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     //Method untuk load data dari api
-    public void loadItem(String url){
+    public void loadItem(String url) {
         //show progress dialog
         progressDialog.setMessage("Please Wait..");
         progressDialog.show();
@@ -116,11 +123,11 @@ public class DashboardActivity extends AppCompatActivity {
                 .getAsObject(ListRestaurantResponse.class, new ParsedRequestListener() {
                     @Override
                     public void onResponse(Object response) {
-                        if(response instanceof ListRestaurantResponse){
+                        if (response instanceof ListRestaurantResponse) {
                             //disable progress dialog
                             progressDialog.dismiss();
                             //null data check
-                            if (((ListRestaurantResponse) response).getData() != null && ((ListRestaurantResponse) response).getData().size() > 0){
+                            if (((ListRestaurantResponse) response).getData() != null && ((ListRestaurantResponse) response).getData().size() > 0) {
                                 adapter.swap(((ListRestaurantResponse) response).getData());
                                 adapter.notifyDataSetChanged();
                             }
